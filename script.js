@@ -15,6 +15,8 @@ const resultsArea = document.getElementById('resultsArea');
 const valueChangeInfoDiv = document.getElementById('valueChangeInfo');
 const summarySectionTitleEl = document.getElementById('summarySectionTitle');
 const graphFdvSelect = document.getElementById('graphFdvSelect');
+const downloadMoonsheetBtn = document.getElementById('downloadMoonsheetBtn'); // New button
+const summaryCaptureArea = document.getElementById('summaryCaptureArea'); // Area to capture
 
 // Event Listeners
 simulateValueChangeCheckbox.addEventListener('change', function() {
@@ -29,9 +31,41 @@ simulateValueChangeCheckbox.addEventListener('change', function() {
 calculateBtn.addEventListener('click', runCalculations);
 graphFdvSelect.addEventListener('change', updateChartDisplay);
 
+downloadMoonsheetBtn.addEventListener('click', function() {
+    const projectName = document.getElementById('projectName').value || "CryptoProject";
+    const date = new Date();
+    const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const filename = `Moonsheet_${projectName.replace(/\s+/g, '_')}_${dateString}.png`;
+
+    // Temporarily adjust styles for capture if needed, e.g., ensure visibility or specific background
+    // For now, we assume the existing styles are fine or handled by #summaryCaptureArea CSS
+
+    if (typeof html2canvas === 'undefined') {
+        alert('Error: html2canvas library is not loaded. Cannot download image.');
+        return;
+    }
+    
+    html2canvas(summaryCaptureArea, {
+        scale: 2, // Increase scale for better resolution
+        useCORS: true, // If you had external images, though not applicable here
+        backgroundColor: "#ffffff" // Ensure a white background for the image
+    }).then(canvas => {
+        const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = image;
+        document.body.appendChild(link); // Required for Firefox
+        link.click();
+        document.body.removeChild(link); // Clean up
+    }).catch(err => {
+        console.error('Error generating moonsheet image:', err);
+        alert('Sorry, there was an error generating the image.');
+    });
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
     monthlyChangePercentInput.disabled = !simulateValueChangeCheckbox.checked;
-    // Set default values for input fields (can also be done directly in HTML value attributes)
     document.getElementById('projectName').value = "Axie Infinity";
     document.getElementById('valueInvested').value = "5000";
     document.getElementById('valuationInvestedAt').value = "20000000";
@@ -40,10 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('vestingPeriodRemaining').value = "6";
     document.getElementById('customFDVs').value = "33, 57";
     
-    runCalculations(); // Initial calculation on load
+    runCalculations(); 
 });
 
-// Helper Functions
 function formatCurrency(value, K_is_1000 = true, decimals = 2) {
     if (value === null || value === undefined || isNaN(value)) return "N/A";
     const absValue = Math.abs(value);
@@ -109,9 +142,7 @@ function getColor(index) {
     return colorPalette[index % colorPalette.length];
 }
 
-// Main Calculation and Display Logic
 function runCalculations() {
-    // Get Input Values
     const projectName = document.getElementById('projectName').value || "N/A Project";
     const valueInvested = parseFloat(document.getElementById('valueInvested').value) || 0;
     const valuationInvestedAt = parseFloat(document.getElementById('valuationInvestedAt').value) || 0;
@@ -149,7 +180,6 @@ function runCalculations() {
         valueChangeInfoDiv.classList.add('hidden');
     }
 
-    // Prepare FDV list
     const allProjectedFDVsFullValues = { "Valuation Invested At": valuationInvestedAt };
     for (const [name, valB] of Object.entries(STANDARD_PROJECTED_FDVS_BILLION_USD)) {
         allProjectedFDVsFullValues[name] = valB * 1_000_000_000;
@@ -161,13 +191,11 @@ function runCalculations() {
     const sortedFDVNames = Object.keys(allProjectedFDVsFullValues).sort((a, b) => allProjectedFDVsFullValues[a] - allProjectedFDVsFullValues[b]);
     const ownershipPct = getOwnershipPercentage(valueInvested, valuationInvestedAt);
 
-    // Effective full vesting month
     let effectiveFullVestingMonth = cliffPeriod;
     if (initialUnlockPercent < 100) { 
         effectiveFullVestingMonth += vestingPeriodRemaining;
     }
     
-    // --- A. Section 1: Summary & Total Potential Worth ---
     const summaryDetailsDiv = document.getElementById('summaryDetails');
     summaryDetailsDiv.innerHTML = `
         <p><strong>Project Name:</strong> ${projectName}</p>
@@ -183,7 +211,7 @@ function runCalculations() {
     totalWorthTable.querySelector('thead').innerHTML = `
         <tr><th>Projected FDV (at Full Vesting)</th><th>Your Investment Potential</th><th>Multiplier</th></tr>`;
     const totalWorthTbody = totalWorthTable.querySelector('tbody');
-    totalWorthTbody.innerHTML = ''; // Clear previous
+    totalWorthTbody.innerHTML = ''; 
     sortedFDVNames.forEach(fdvName => {
         const projectedFDV_at_T0 = allProjectedFDVsFullValues[fdvName]; 
         let totalPotentialWorth = ownershipPct * projectedFDV_at_T0;
@@ -202,7 +230,6 @@ function runCalculations() {
         row.insertCell().textContent = `${multiplier.toFixed(2)}x`;
     });
 
-    // --- B. Section 2: Unlocked Investment Value Over Time ---
     const unlockedValueTable = document.getElementById('unlockedValueTable');
     const unlockedValueThead = unlockedValueTable.querySelector('thead');
     let headerRowHTML = `<tr><th>Time Since Launch</th><th>Unlocked Fraction (%)</th>`;
@@ -214,20 +241,18 @@ function runCalculations() {
     unlockedValueThead.innerHTML = headerRowHTML;
     
     const unlockedValueTbody = unlockedValueTable.querySelector('tbody');
-    unlockedValueTbody.innerHTML = ''; // Clear previous
+    unlockedValueTbody.innerHTML = '';
 
-    // Dynamic time points for table B and graph
     let dynamicTimePoints = new Set([0, cliffPeriod, effectiveFullVestingMonth]);
     STANDARD_TIME_POINTS_MONTHS.forEach(p => {
         if (p <= effectiveFullVestingMonth) {
             dynamicTimePoints.add(p);
         }
     });
-    if (effectiveFullVestingMonth === 0) dynamicTimePoints.add(0); // Ensure 0 is present if vesting is immediate
+    if (effectiveFullVestingMonth === 0) dynamicTimePoints.add(0);
     const finalSortedTimePoints = [...dynamicTimePoints].sort((a,b) => a-b);
 
-    // --- Graph Data Preparation ---
-    fullChartDataSets = []; // Clear and repopulate
+    fullChartDataSets = []; 
     predefinedColors = sortedFDVNames.map((_, index) => getColor(index)); 
 
     sortedFDVNames.forEach((fdvName, index) => {
@@ -267,16 +292,15 @@ function runCalculations() {
         });
     });
     
-    // Populate FDV Select Dropdown for Graph
-    graphFdvSelect.innerHTML = '<option value="all">All Projected FDVs</option>'; // Default option
+    graphFdvSelect.innerHTML = '<option value="all">All Projected FDVs</option>'; 
     sortedFDVNames.forEach((fdvName, index) => {
         const option = document.createElement('option');
         option.value = index; 
         option.textContent = `${fdvName === "Valuation Invested At" ? formatCurrency(allProjectedFDVsFullValues[fdvName],true,0) : fdvName.replace(" (Custom)","")}`;
         graphFdvSelect.appendChild(option);
     });
-    graphFdvSelect.value = "all"; // Set default selection
-    updateChartDisplay(); // Initial chart display
+    graphFdvSelect.value = "all"; 
+    updateChartDisplay(); 
 
     resultsArea.classList.remove('hidden');
 }
@@ -288,12 +312,9 @@ function updateChartDisplay() {
     if (selectedFdvIndex === "all") {
         datasetsToShow = fullChartDataSets;
     } else if (fullChartDataSets[selectedFdvIndex]) {
-        // Ensure that the selected dataset is an array for Chart.js
         datasetsToShow = [fullChartDataSets[selectedFdvIndex]];
     }
 
-
-    // Regenerate labels for the chart based on the current vesting period
     let effectiveFullVestingMonthForLabels = parseInt(document.getElementById('cliffPeriod').value) || 0;
     const initialUnlock = parseFloat(document.getElementById('initialUnlockPercent').value) || 0;
     if (initialUnlock < 100) {
@@ -306,7 +327,7 @@ function updateChartDisplay() {
             dynamicTimePointsForLabels.add(p);
         }
     });
-    if (effectiveFullVestingMonthForLabels === 0) dynamicTimePointsForLabels.add(0);
+    if (effectiveFullVestingMonthForLabels === 0) dynamicTimePointsForLabels.add(0); 
     const finalSortedTimePointsForLabels = [...dynamicTimePointsForLabels].sort((a,b)=>a-b);
 
 
@@ -328,10 +349,10 @@ function updateChartDisplay() {
                     beginAtZero: true,
                     ticks: { 
                         callback: (value) => formatCurrency(value, true, 0),
-                        color: '#6b7280' // Tailwind gray-500 for tick color
+                        color: '#6b7280' 
                     },
                     grid: {
-                        color: '#e5e7eb' // Tailwind gray-200 for grid lines
+                        color: '#e5e7eb' 
                     }
                 },
                 x: {
@@ -339,7 +360,7 @@ function updateChartDisplay() {
                         color: '#6b7280' 
                     },
                     grid: {
-                        display: false // Hide vertical grid lines for cleaner look
+                        display: false 
                     }
                 }
             },
@@ -360,13 +381,13 @@ function updateChartDisplay() {
                         boxWidth: 15, 
                         padding: 20,
                         font: { size: 12},
-                        color: '#374151' // Tailwind gray-700
+                        color: '#374151' 
                     } 
                 }
             },
             elements: {
                 line: {
-                    tension: 0.2 // Smoother lines
+                    tension: 0.2 
                 }
             }
         }
