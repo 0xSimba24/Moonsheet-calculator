@@ -23,7 +23,7 @@ th {
 }
 .input-group { 
     margin-bottom: 1rem; 
-    position: relative; /* For tooltip positioning if needed directly on group */
+    position: relative; 
 }
 .input-group label { 
     display: block; 
@@ -44,34 +44,34 @@ th {
     width: 100%;
 }
 .input-group input[type="checkbox"] {
-    width: auto; /* Checkbox specific width */
+    width: auto; 
     margin-right: 0.5rem;
-    accent-color: #4a5568; /* Tailwind gray-700 for checkbox color */
+    accent-color: #4a5568; 
 }
-.input-group-checkbox label { /* For aligning checkbox and its label */
+.input-group-checkbox label { 
     display: flex;
     align-items: center;
     cursor: pointer;
 }
 .btn {
-    background-color: #4a5568; /* Tailwind gray-700 */
+    background-color: #4a5568; 
     color: white;
     padding: 0.75rem 1.5rem;
-    border-radius: 0.375rem; /* Tailwind rounded-md */
+    border-radius: 0.375rem; 
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 .btn:hover { 
-    background-color: #2d3748; /* Tailwind gray-800 */
+    background-color: #2d3748; 
 }
 #chartContainerWrapper { 
     width: 100%;
     max-width: 900px; 
     margin: 1rem auto 2rem auto; 
     padding: 1rem;
-    border-radius: 0.5rem; /* Tailwind rounded-lg */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-lg */
+    border-radius: 0.5rem; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
     background-color: white;
 }
 #chartContainer {
@@ -84,7 +84,7 @@ th {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 250px; 
-    background-color: #555; /* Dark gray */
+    background-color: #555; 
     color: #fff;
     text-align: center;
     border-radius: 6px;
@@ -96,7 +96,7 @@ th {
     margin-left: -125px; 
     opacity: 0;
     transition: opacity 0.3s;
-    font-size: 0.875rem; /* Tailwind text-sm */
+    font-size: 0.875rem; 
     white-space: normal; 
 }
 .tooltip:hover .tooltiptext {
@@ -104,18 +104,18 @@ th {
     opacity: 1;
 }
 .text-light-grey-placeholder::placeholder { 
-    color: #a0aec0; /* Tailwind gray-500 */
-    opacity: 1; /* Ensure placeholder is visible */
+    color: #a0aec0; 
+    opacity: 1; 
 }
-.text-light-grey-placeholder:-ms-input-placeholder { /* For Internet Explorer 10-11 */
+.text-light-grey-placeholder:-ms-input-placeholder { 
     color: #a0aec0;
 }
-.text-light-grey-placeholder::-ms-input-placeholder { /* For Microsoft Edge */
+.text-light-grey-placeholder::-ms-input-placeholder { 
     color: #a0aec0;
 }
 #valueChangeInfo {
-    font-size: 0.875rem; /* Tailwind text-sm */
-    color: #4a5568; /* Tailwind gray-700 */
+    font-size: 0.875rem; 
+    color: #4a5568; 
     margin-top: 0.5rem;
     text-align: center;
 }
@@ -134,6 +134,14 @@ th {
     max-width: 350px;
 }
 
-/* Note: Tailwind classes are still applied directly in the HTML for layout and most styling. 
-   This CSS file primarily contains styles that were in the <style> tag or specific overrides. */
-```javascript
+/* Specific styles for the moonsheet capture area if needed */
+#summaryCaptureArea {
+    background-color: #ffffff; /* Ensure it has a solid background for capture */
+    padding: 1.5rem; /* Add some padding for the image */
+    border-radius: 0.5rem; /* Optional: if you want rounded corners in the image */
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); Optional: if you want a slight shadow in the image */
+}
+#summaryCaptureArea h2 { /* Ensure title is captured well */
+    text-align: center;
+    margin-bottom: 1rem;
+}
