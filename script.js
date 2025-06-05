@@ -1,4 +1,4 @@
-// script.js
+\// script.js
 const STANDARD_PROJECTED_FDVS_BILLION_USD = {
     "1B": 1.0, "3B": 3.0, "5B": 5.0, "10B": 10.0, "50B": 50.0,
 };
@@ -15,8 +15,9 @@ const resultsArea = document.getElementById('resultsArea');
 const valueChangeInfoDiv = document.getElementById('valueChangeInfo');
 const summarySectionTitleEl = document.getElementById('summarySectionTitle');
 const graphFdvSelect = document.getElementById('graphFdvSelect');
-const downloadMoonsheetBtn = document.getElementById('downloadMoonsheetBtn'); // New button
-const summaryCaptureArea = document.getElementById('summaryCaptureArea'); // Area to capture
+const downloadMoonsheetBtn = document.getElementById('downloadMoonsheetBtn'); 
+const summaryCaptureArea = document.getElementById('summaryCaptureArea'); 
+const moonsheetImageTitleEl = document.getElementById('moonsheetImageTitle'); // Get the new title element
 
 // Event Listeners
 simulateValueChangeCheckbox.addEventListener('change', function() {
@@ -32,35 +33,62 @@ calculateBtn.addEventListener('click', runCalculations);
 graphFdvSelect.addEventListener('change', updateChartDisplay);
 
 downloadMoonsheetBtn.addEventListener('click', function() {
-    const projectName = document.getElementById('projectName').value || "CryptoProject";
+    const projectNameValue = document.getElementById('projectName').value || "CryptoProject"; // Use value from input
     const date = new Date();
     const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    const filename = `Moonsheet_${projectName.replace(/\s+/g, '_')}_${dateString}.png`;
+    const filename = `Moonsheet_${projectNameValue.replace(/\s+/g, '_')}_${dateString}.png`;
 
-    // Temporarily adjust styles for capture if needed, e.g., ensure visibility or specific background
-    // For now, we assume the existing styles are fine or handled by #summaryCaptureArea CSS
+    // Populate the moonsheet title before capture
+    if (moonsheetImageTitleEl) {
+        moonsheetImageTitleEl.textContent = `Moonsheet for: ${projectNameValue}`;
+    }
+
 
     if (typeof html2canvas === 'undefined') {
         alert('Error: html2canvas library is not loaded. Cannot download image.');
+        if (moonsheetImageTitleEl) moonsheetImageTitleEl.textContent = ''; // Clear title on error
         return;
     }
     
-    html2canvas(summaryCaptureArea, {
-        scale: 2, // Increase scale for better resolution
-        useCORS: true, // If you had external images, though not applicable here
-        backgroundColor: "#ffffff" // Ensure a white background for the image
-    }).then(canvas => {
-        const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = image;
-        document.body.appendChild(link); // Required for Firefox
-        link.click();
-        document.body.removeChild(link); // Clean up
-    }).catch(err => {
-        console.error('Error generating moonsheet image:', err);
-        alert('Sorry, there was an error generating the image.');
-    });
+    // Ensure the capture area is visible if it's part of resultsArea that might be hidden
+    const resultsAreaWasHidden = resultsArea.classList.contains('hidden');
+    if (resultsAreaWasHidden) {
+        resultsArea.classList.remove('hidden');
+    }
+    // Give a brief moment for styles to apply if the element was just made visible
+    setTimeout(() => {
+        html2canvas(summaryCaptureArea, {
+            scale: 2.5, // Increased scale for even better resolution
+            useCORS: true, 
+            backgroundColor: null, // Allow CSS background of summaryCaptureArea to be used
+            scrollX: 0, // Prevent horizontal scroll issues in capture
+            scrollY: -window.scrollY, // Adjust for page scroll
+            windowWidth: summaryCaptureArea.scrollWidth,
+            windowHeight: summaryCaptureArea.scrollHeight
+        }).then(canvas => {
+            const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = image;
+            document.body.appendChild(link); 
+            link.click();
+            document.body.removeChild(link); 
+
+            if (moonsheetImageTitleEl) { // Optionally clear or hide title after capture
+                 // moonsheetImageTitleEl.textContent = ''; // Or hide it: moonsheetImageTitleEl.style.display = 'none';
+            }
+            if (resultsAreaWasHidden) { // Re-hide if it was originally hidden
+                resultsArea.classList.add('hidden');
+            }
+        }).catch(err => {
+            console.error('Error generating moonsheet image:', err);
+            alert('Sorry, there was an error generating the image.');
+            if (moonsheetImageTitleEl) moonsheetImageTitleEl.textContent = ''; 
+            if (resultsAreaWasHidden) {
+                resultsArea.classList.add('hidden');
+            }
+        });
+    }, 100); // 100ms delay
 });
 
 
@@ -143,7 +171,7 @@ function getColor(index) {
 }
 
 function runCalculations() {
-    const projectName = document.getElementById('projectName').value || "N/A Project";
+    const projectNameValue = document.getElementById('projectName').value || "N/A Project"; // Renamed to avoid conflict
     const valueInvested = parseFloat(document.getElementById('valueInvested').value) || 0;
     const valuationInvestedAt = parseFloat(document.getElementById('valuationInvestedAt').value) || 0;
     const cliffPeriod = parseInt(document.getElementById('cliffPeriod').value) || 0;
@@ -198,7 +226,7 @@ function runCalculations() {
     
     const summaryDetailsDiv = document.getElementById('summaryDetails');
     summaryDetailsDiv.innerHTML = `
-        <p><strong>Project Name:</strong> ${projectName}</p>
+        <p><strong>Project Name:</strong> ${projectNameValue}</p>
         <p><strong>Value Invested:</strong> ${formatCurrency(valueInvested, false)}</p>
         <p><strong>Valuation Invested At:</strong> ${formatCurrency(valuationInvestedAt)}</p>
         <p><strong>Your Ownership Pct:</strong> ${(ownershipPct * 100).toFixed(6)}%</p>
