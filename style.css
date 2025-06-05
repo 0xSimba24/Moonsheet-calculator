@@ -134,14 +134,43 @@ th {
     max-width: 350px;
 }
 
-/* Specific styles for the moonsheet capture area if needed */
+/* Enhanced styles for the moonsheet capture area */
 #summaryCaptureArea {
-    background-color: #ffffff; /* Ensure it has a solid background for capture */
-    padding: 1.5rem; /* Add some padding for the image */
-    border-radius: 0.5rem; /* Optional: if you want rounded corners in the image */
-    /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); Optional: if you want a slight shadow in the image */
+    background-color: #f9fafb; /* Light gray background for the entire capture block */
+    padding: 2rem; 
+    border-radius: 0.75rem; /* Tailwind rounded-xl */
+    border: 1px solid #d1d5db; /* Tailwind gray-300 border */
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); /* More prominent shadow for "lift" */
+    margin-bottom: 1rem; /* Add some space before the download button if it's part of the capture */
 }
-#summaryCaptureArea h2 { /* Ensure title is captured well */
+#moonsheetImageTitle { /* Title specifically for the downloaded image */
+    border-bottom: 2px solid #6b7280; /* Tailwind gray-500 accent line */
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem; /* Space between this title and the section title */
+    font-size: 1.75rem; /* Slightly larger for emphasis in the image */
+    color: #111827; /* Tailwind gray-900 */
+}
+#summaryCaptureArea #summarySectionTitle { /* Original title of the section within the capture */
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem; 
+    color: #1f2937; /* Tailwind gray-800 */
+    font-size: 1.25rem; /* Slightly smaller than the main image title */
+}
+/* Styles for the table within the capture to make it stand out */
+#summaryCaptureArea #totalPotentialWorthTable th {
+    background-color: #e5e7eb; /* Tailwind gray-200 for table header */
+    color: #1f2937; /* Tailwind gray-800 for header text */
+    font-weight: 600; /* Bold header text */
+    border-bottom: 2px solid #9ca3af; /* Tailwind gray-400 */
+}
+#summaryCaptureArea #totalPotentialWorthTable td {
+    background-color: #ffffff; /* White cells */
+    border-color: #e5e7eb; /* Lighter borders for cells */
+}
+#summaryCaptureArea #totalPotentialWorthTable tr:nth-child(even) td {
+    background-color: #f9fafb; /* Subtle stripe for even rows (same as capture area bg for cohesion) */
+}
+#summaryCaptureArea #summaryDetails {
+    border: 1px dashed #9ca3af; /* Add a dashed border to the summary details box */
+    background-color: #f3f4f6; /* Slightly different light gray */
 }
