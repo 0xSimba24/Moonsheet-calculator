@@ -1,0 +1,139 @@
+/* style.css */
+body { 
+    font-family: 'Inter', sans-serif; 
+}
+.table-container { 
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; 
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-bottom: 1.5rem; 
+}
+th, td { 
+    border: 1px solid #e2e8f0; /* Tailwind gray-300 */
+    padding: 0.75rem; 
+    text-align: left; 
+    white-space: nowrap; 
+}
+th { 
+    background-color: #f7fafc; /* Tailwind gray-100 */
+}
+.input-group { 
+    margin-bottom: 1rem; 
+    position: relative; /* For tooltip positioning if needed directly on group */
+}
+.input-group label { 
+    display: block; 
+    margin-bottom: 0.25rem; 
+    font-weight: 500; 
+}
+.input-group input[type="text"], 
+.input-group input[type="number"], 
+.input-group input[type="checkbox"], 
+.input-group select {
+    padding: 0.5rem;
+    border-radius: 0.375rem; /* Tailwind rounded-md */
+    border: 1px solid #cbd5e0; /* Tailwind gray-400 */
+}
+.input-group input[type="text"], 
+.input-group input[type="number"], 
+.input-group select {
+    width: 100%;
+}
+.input-group input[type="checkbox"] {
+    width: auto; /* Checkbox specific width */
+    margin-right: 0.5rem;
+    accent-color: #4a5568; /* Tailwind gray-700 for checkbox color */
+}
+.input-group-checkbox label { /* For aligning checkbox and its label */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.btn {
+    background-color: #4a5568; /* Tailwind gray-700 */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem; /* Tailwind rounded-md */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.btn:hover { 
+    background-color: #2d3748; /* Tailwind gray-800 */
+}
+#chartContainerWrapper { 
+    width: 100%;
+    max-width: 900px; 
+    margin: 1rem auto 2rem auto; 
+    padding: 1rem;
+    border-radius: 0.5rem; /* Tailwind rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-lg */
+    background-color: white;
+}
+#chartContainer {
+     height: 400px; 
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 250px; 
+    background-color: #555; /* Dark gray */
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 5px; 
+    position: absolute;
+    z-index: 10; 
+    bottom: 125%; 
+    left: 50%;
+    margin-left: -125px; 
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.875rem; /* Tailwind text-sm */
+    white-space: normal; 
+}
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+.text-light-grey-placeholder::placeholder { 
+    color: #a0aec0; /* Tailwind gray-500 */
+    opacity: 1; /* Ensure placeholder is visible */
+}
+.text-light-grey-placeholder:-ms-input-placeholder { /* For Internet Explorer 10-11 */
+    color: #a0aec0;
+}
+.text-light-grey-placeholder::-ms-input-placeholder { /* For Microsoft Edge */
+    color: #a0aec0;
+}
+#valueChangeInfo {
+    font-size: 0.875rem; /* Tailwind text-sm */
+    color: #4a5568; /* Tailwind gray-700 */
+    margin-top: 0.5rem;
+    text-align: center;
+}
+.graph-controls {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.graph-controls label {
+    margin-right: 0.5rem;
+    font-weight: 500;
+}
+.graph-controls select {
+    min-width: 200px; 
+    max-width: 350px;
+}
+
+/* Note: Tailwind classes are still applied directly in the HTML for layout and most styling. 
+   This CSS file primarily contains styles that were in the <style> tag or specific overrides. */
+```javascript
